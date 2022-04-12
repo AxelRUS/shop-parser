@@ -10,6 +10,7 @@
   },
   "type": "module",
   "dependencies": {
+    "lodash": "^4.17.21",
     "nedb-promises": "^6.0.3",
     "puppeteer": "^13.5.2",
     "winston": "^3.7.2"
