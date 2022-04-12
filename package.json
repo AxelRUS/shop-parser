@@ -1,0 +1,28 @@
+{
+  "name": "shop-parser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/AxelRUS/shop-parser.git",
+  "author": "Emil' Khalikov <halikov@bars.group>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "nedb-promises": "^6.0.3",
+    "puppeteer": "^13.5.2",
+    "winston": "^3.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-sonarjs": "^0.13.0",
+    "prettier": "^2.6.2"
+  }
+}
