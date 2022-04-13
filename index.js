@@ -1,10 +1,20 @@
+/* import PagePdf from './src/page-pdf.js';
+
+const pagePdf = new PagePdf();
+try {
+    await pagePdf.launch();
+    await pagePdf.getPdf('https://habr.com/ru/post/537764/');
+} finally {
+    await pagePdf.free();
+} */
+
 import MvideoParser from './src/mvideo-parser.js';
 
 const siteParser = new MvideoParser();
 try {
     await siteParser.launch();
     const results = await siteParser.parsePage(
-        'https://www.mvideo.ru/stiralnye-i-sushilnye-mashiny-2427/stiralnye-mashiny-89?showCount=72'
+        'https://www.mvideo.ru/playstation-4327/ps5-igry-22780?showCount=72'
     );
     console.log(results, results?.length);
 } finally {
