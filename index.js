@@ -1,3 +1,17 @@
+import SiteParser from './src/site-parser.js';
+
+const siteParser = new SiteParser();
+try {
+    await siteParser.launch();
+    const results = await siteParser.parsePage(
+        'https://www.mvideo.ru/playstation-4327/ps5-igry-22780?showCount=72&page=2'
+    );
+    console.log(results, results?.length);
+} finally {
+    await siteParser.free();
+}
+
+/*
 import puppeteer from 'puppeteer';
 import _ from 'lodash';
 
@@ -159,3 +173,4 @@ console.info(_.zip(...parsedResult));
 // await page.screenshot({ path: 'screenshot.png', fullPage: true });
 
 await browser.close();
+*/
