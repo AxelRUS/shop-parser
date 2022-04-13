@@ -22,6 +22,8 @@ module.exports = {
     },
     rules: {
         'prettier/prettier': 'error',
+        'import/extensions': [0, { js: "always" }],
         indent: 'off',
+        'no-underscore-dangle': 1
     },
 };

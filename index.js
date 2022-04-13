@@ -1,10 +1,10 @@
-import SiteParser from './src/site-parser.js';
+import MvideoParser from './src/mvideo-parser.js';
 
-const siteParser = new SiteParser();
+const siteParser = new MvideoParser();
 try {
     await siteParser.launch();
     const results = await siteParser.parsePage(
-        'https://www.mvideo.ru/playstation-4327/ps5-igry-22780?showCount=72&page=2'
+        'https://www.mvideo.ru/stiralnye-i-sushilnye-mashiny-2427/stiralnye-mashiny-89?showCount=72'
     );
     console.log(results, results?.length);
 } finally {

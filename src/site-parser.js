@@ -1,5 +1,4 @@
 import puppeteer from 'puppeteer';
-import _ from 'lodash';
 
 const config = {
     viewportHeight: 1280,
@@ -27,27 +26,11 @@ export default class SiteParser {
         await this.page.setUserAgent(config.userAgent);
     }
 
-    async parsePage(url) {
-        await this.newPage();
-        await this.page.goto(url, { waitUntil: 'networkidle2' });
-        await this.#scrollDown();
-        const result = await Promise.all([
-            this.#parseTextValues(
-                'div.product-card__title-line-container .product-title__text'
-            ),
-            this.#parseTextValues(
-                'div.product-card__price-block-container .price__main-value'
-            ),
-        ]);
-        await this.page.screenshot({ path: 'screenshot.png', fullPage: true });
-        return _.zip(...result);
-    }
-
-    async optimizeLoading() {
+    async _optimizeLoading() {
         await this.page.setRequestInterception(true);
         this.page.on('request', (request) => {
             if (
-                ['image', 'stylesheet', 'font', 'script'].indexOf(
+                ['image', 'stylesheet', 'font'].indexOf(
                     request.resourceType()
                 ) !== -1
             ) {
@@ -58,7 +41,7 @@ export default class SiteParser {
         });
     }
 
-    #parseTextValues(selector) {
+    _parseTextValues(selector) {
         return this.page.evaluate((_selector) => {
             // eslint-disable-next-line no-undef
             return Array.from(document.querySelectorAll(_selector)).map(
@@ -67,7 +50,7 @@ export default class SiteParser {
         }, selector);
     }
 
-    async #scrollDown() {
+    async _scrollDown() {
         const getMaxScroll = () =>
             this.page.evaluate(function () {
                 return Promise.resolve(
