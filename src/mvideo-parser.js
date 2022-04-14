@@ -9,12 +9,11 @@ export default class MvideoParser extends SiteParser {
         statuses: [],
     };
 
-    async parsePage(url) {
+    async parsePageFull(url) {
         await this.newPage();
         // await this._optimizeLoading();
-        await this.setInterceptors();
         await this.page.goto(url, { waitUntil: 'networkidle2' });
-        // await this._scrollDown();
+        await this._scrollDown();
         const result = await Promise.all([
             this._parseTextValues(
                 'div.product-card__title-line-container .product-title__text'
@@ -27,6 +26,33 @@ export default class MvideoParser extends SiteParser {
         return _.zip(...result);
     }
 
+    async parsePage(url) {
+        const pageUrl = new URL(url);
+        await this.newPage();
+        // await this._optimizeLoading();
+        await this.setInterceptors();
+        // await this.page.goto(url, { waitUntil: 'networkidle2' });
+        // await this._scrollDown();
+
+        let pageNum = 1;
+        do {
+            if (pageNum > 1) {
+                pageUrl.searchParams.set('page', pageNum);
+            }
+            // eslint-disable-next-line no-await-in-loop
+            await this.page.goto(pageUrl, { waitUntil: 'networkidle2' });
+            console.log(pageUrl.toString());
+            pageNum += 1;
+        } while (this.goods.count > this.goods.prices.length);
+
+        console.log(
+            this.goods.count,
+            this.goods.prices.length,
+            this.goods.goods.length,
+            this.goods.statuses.length
+        );
+    }
+
     async setInterceptors() {
         await this.page.setRequestInterception(true);
 
@@ -37,7 +63,6 @@ export default class MvideoParser extends SiteParser {
 
         const appendGoods = async (response) => {
             const json = await response.json();
-            console.log(json);
             this.goods.goods = this.goods.goods.concat(json.body.products);
         };
 
@@ -50,7 +75,6 @@ export default class MvideoParser extends SiteParser {
 
         const appendPrices = async (response) => {
             const json = await response.json();
-            console.log(json);
             this.goods.prices = this.goods.prices.concat(
                 json?.body?.materialPrices
             );
