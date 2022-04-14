@@ -2,7 +2,7 @@ import _ from 'lodash';
 import SiteParser from './site-parser.js';
 
 export default class MvideoParser extends SiteParser {
-    goods = {
+    products = {
         count: 0,
         goods: [],
         prices: [],
@@ -43,14 +43,27 @@ export default class MvideoParser extends SiteParser {
             await this.page.goto(pageUrl, { waitUntil: 'networkidle2' });
             console.log(pageUrl.toString());
             pageNum += 1;
-        } while (this.goods.count > this.goods.prices.length);
+        } while (this.products.count > this.products.prices.length);
 
         console.log(
-            this.goods.count,
-            this.goods.prices.length,
-            this.goods.goods.length,
-            this.goods.statuses.length
+            this.products.count,
+            this.products.prices.length,
+            this.products.goods.length,
+            this.products.statuses.length
         );
+
+        const parsedCount = Math.min(
+            this.products.prices.length,
+            this.products.goods.length,
+            this.products.statuses.length
+        );
+        if (this.products.count !== parsedCount) {
+            return Promise.reject(
+                Error(
+                    `Количество полученных данных ${parsedCount} не соответствует количеству товаров ${this.products.count}`
+                )
+            );
+        }
     }
 
     async setInterceptors() {
@@ -58,24 +71,26 @@ export default class MvideoParser extends SiteParser {
 
         const getCount = async (response) => {
             const json = await response.json();
-            this.goods.count = json?.body?.currentCategory?.count;
+            this.products.count = json?.body?.currentCategory?.count;
         };
 
         const appendGoods = async (response) => {
             const json = await response.json();
-            this.goods.goods = this.goods.goods.concat(json.body.products);
+            this.products.goods = this.products.goods.concat(
+                json.body.products
+            );
         };
 
         const appendStatuses = async (response) => {
             const json = await response.json();
-            this.goods.statuses = this.goods.statuses.concat(
+            this.products.statuses = this.products.statuses.concat(
                 json.body.statuses
             );
         };
 
         const appendPrices = async (response) => {
             const json = await response.json();
-            this.goods.prices = this.goods.prices.concat(
+            this.products.prices = this.products.prices.concat(
                 json?.body?.materialPrices
             );
         };
