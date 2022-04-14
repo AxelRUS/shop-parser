@@ -65,7 +65,7 @@ export default class MvideoParser extends SiteParser {
                 )
             );
         }
-        for (let i = 0; i < this.products.goods.length; i++) {
+        for (let i = 0; i < this.products.goods.length; i += 1) {
             const { productId } = this.products.goods[i];
             const price = this.products.prices.find(
                 (el) => el.productId === productId
@@ -114,6 +114,7 @@ export default class MvideoParser extends SiteParser {
         this.page.on('response', (response) => {
             const url = new URL(response.url());
             const path = url.origin + url.pathname;
+            // eslint-disable-next-line default-case
             switch (path) {
                 case 'https://www.mvideo.ru/bff/products/listing':
                     getCount(response);
