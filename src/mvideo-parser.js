@@ -48,6 +48,14 @@ export default class MvideoParser extends SiteParser {
             );
         };
 
+        const appendPrices = async (response) => {
+            const json = await response.json();
+            console.log(json);
+            this.goods.prices = this.goods.prices.concat(
+                json?.body?.materialPrices
+            );
+        };
+
         this.page.on('request', (request) => {
             request.continue();
         });
@@ -64,6 +72,9 @@ export default class MvideoParser extends SiteParser {
                     break;
                 case 'https://www.mvideo.ru/bff/products/statuses':
                     appendStatuses(response);
+                    break;
+                case 'https://www.mvideo.ru/bff/products/prices':
+                    appendPrices(response);
                     break;
             }
         });
