@@ -28,6 +28,7 @@ export default class MvideoParser extends SiteParser {
 
     async parsePage(url) {
         const pageUrl = new URL(url);
+        pageUrl.searchParams.set('showCount', 72);
         await this.newPage();
         // await this._optimizeLoading();
         await this.setInterceptors();
