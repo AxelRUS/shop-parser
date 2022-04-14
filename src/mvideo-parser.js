@@ -64,6 +64,17 @@ export default class MvideoParser extends SiteParser {
                 )
             );
         }
+        for (let i = 0; i < this.products.goods.length; i++) {
+            const { productId } = this.products.goods[i];
+            const price = this.products.prices.find(
+                (el) => el.productId === productId
+            );
+            const status = this.products.statuses.find(
+                (el) => el.productId === productId
+            );
+            Object.assign(this.products.goods[i], price, status);
+        }
+        return this.products.goods;
     }
 
     async setInterceptors() {
