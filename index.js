@@ -9,12 +9,14 @@ try {
 } */
 
 import MvideoParser from './src/mvideo-parser.js';
+import EldoradoParser from './src/eldorado-parser.js';
 
-const siteParser = new MvideoParser();
+// const siteParser = new MvideoParser();
+const siteParser = new EldoradoParser();
 try {
     await siteParser.launch();
     const results = await siteParser.parsePage(
-        'https://www.mvideo.ru/playstation-4327/ps5-igry-22780?showCount=72'
+        'https://www.eldorado.ru/c/vse-igry/b/SONY/'
     );
     console.log(results, results?.length);
 } finally {
