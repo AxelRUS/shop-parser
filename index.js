@@ -8,6 +8,7 @@ try {
     await pagePdf.free();
 } */
 
+import { promises as fsPromises } from 'fs';
 import MvideoParser from './src/mvideo-parser.js';
 import EldoradoParser from './src/eldorado-parser.js';
 
@@ -18,6 +19,7 @@ try {
     const results = await siteParser.parsePage(
         'https://www.eldorado.ru/c/vse-igry/b/SONY/'
     );
+    await fsPromises.writeFile('eldorado.json', JSON.stringify(results));
     console.log(results, results?.length);
 } finally {
     await siteParser.free();
