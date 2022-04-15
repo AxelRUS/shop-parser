@@ -2,7 +2,7 @@ import _ from 'lodash';
 import SiteParser from './site-parser.js';
 
 const sleep = (timeout) =>
-    new Promise((resolve) => setTimeout(resolve(), timeout));
+    new Promise((resolve) => setTimeout(resolve, timeout));
 
 export default class EldoradoParser extends SiteParser {
     async parsePage(url) {
@@ -40,13 +40,37 @@ export default class EldoradoParser extends SiteParser {
                 });
             }
             await this._scrollDown();
-            pageResult = await Promise.all([
-                this._parseTextValues('a.SF'),
-                this._parseTextValues('span.WR'),
-            ]);
+            pageResult = await this.page.evaluate(() => {
+                return Array.from(
+                    document.querySelectorAll('#listing-container li.JF')
+                ).map((el) => {
+                    // ['a.SF', 'span.WR', 'span.wR .QH'].map((sel) =>
+                    //     el.querySelector(sel)?.textContent?.trim()
+                    // )
+                    const productSelectors = {
+                        id: '.QF',
+                        title: 'a.SF',
+                        price: 'span.WR',
+                        bonus: 'span.uR .QH',
+                        bonusAdditional: 'span.wR .QH',
+                        availability: '.BN',
+                    };
+
+                    // eslint-disable-next-line no-shadow
+                    const result = {};
+                    for (const [key, value] of Object.entries(
+                        productSelectors
+                    )) {
+                        result[key] = el
+                            .querySelector(value)
+                            ?.textContent?.trim();
+                    }
+                    return result;
+                });
+            });
             i += 1;
-            result = result.concat(_.zip(...pageResult));
-        } while (Math.max(...pageResult.map((el) => el.length)) === 36);
+            result = result.concat(pageResult);
+        } while (pageResult.length === 36);
         // await this.page.screenshot({ path: 'screenshot.png', fullPage: true });
         return result;
     }
