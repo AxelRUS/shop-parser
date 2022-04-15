@@ -2,7 +2,7 @@ import _ from 'lodash';
 import SiteParser from './site-parser.js';
 
 const sleep = (timeout) =>
-    new Promise((resolve) => setTimeout(resolve, timeout));
+    new Promise((resolve) => setTimeout(resolve(), timeout));
 
 export default class EldoradoParser extends SiteParser {
     async parsePage(url) {
@@ -12,16 +12,23 @@ export default class EldoradoParser extends SiteParser {
         let i = 1;
         let result = [];
         let pageResult;
+        await this.page.goto(pageUrl, {
+            waitUntil: 'networkidle2',
+        });
         do {
-            if (i > 1) pageUrl.searchParams.set('page', i);
-            console.log(pageUrl.toString());
-            await this.page.setExtraHTTPHeaders({
-                referer: 'https://www.google.com',
-            });
-            await this.page.goto(pageUrl, {
-                waitUntil: 'networkidle2',
-            });
             // await sleep(5000);
+
+            if (i > 1) {
+                await this.page.waitForSelector('.wr', { timeout: 200 });
+                await this.page.evaluate(
+                    (i) =>
+                        [...document.querySelectorAll('.wr a')]
+                            .find((el) => el.textContent === `${i}`)
+                            .click(),
+                    i
+                );
+            }
+            console.log(this.page.url());
             try {
                 await this.page.waitForSelector('#listing-container', {
                     timeout: 10000,
@@ -38,9 +45,9 @@ export default class EldoradoParser extends SiteParser {
                 this._parseTextValues('span.WR'),
             ]);
             i += 1;
+            result = result.concat(_.zip(...pageResult));
         } while (Math.max(...pageResult.map((el) => el.length)) === 36);
-        result = result.concat(pageResult);
         // await this.page.screenshot({ path: 'screenshot.png', fullPage: true });
-        return _.zip(...result);
+        return result;
     }
 }
