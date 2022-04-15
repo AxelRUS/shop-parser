@@ -10,7 +10,6 @@ export default class MvideoParser extends SiteParser {
     };
 
     async parsePageFull(url) {
-        await this.newPage();
         // await this._optimizeLoading();
         await this.page.goto(url, { waitUntil: 'networkidle2' });
         await this._scrollDown();
@@ -29,7 +28,6 @@ export default class MvideoParser extends SiteParser {
     async parsePage(url) {
         const pageUrl = new URL(url);
         pageUrl.searchParams.set('showCount', 72);
-        await this.newPage();
         // await this._optimizeLoading();
         await this.setInterceptors();
         // await this.page.goto(url, { waitUntil: 'networkidle2' });

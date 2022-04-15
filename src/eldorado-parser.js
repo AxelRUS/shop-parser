@@ -6,13 +6,11 @@ const sleep = (timeout) =>
 
 export default class EldoradoParser extends SiteParser {
     async parsePage(url) {
-        const pageUrl = new URL(url);
-        await this.newPage();
         // await this._optimizeLoading();
         let i = 1;
         let result = [];
         let pageResult;
-        await this.page.goto(pageUrl, {
+        await this.page.goto(url, {
             waitUntil: 'networkidle2',
         });
         do {

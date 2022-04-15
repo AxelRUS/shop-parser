@@ -19,6 +19,7 @@ const opts = {
 export default class SiteParser {
     async launch(options = {}) {
         this.browser = await puppeteer.launch({ ...options, ...opts });
+        await this.newPage();
     }
 
     async newPage() {
