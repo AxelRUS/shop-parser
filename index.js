@@ -15,12 +15,24 @@ import EldoradoParser from './src/eldorado-parser.js';
 // const siteParser = new MvideoParser();
 const siteParser = new EldoradoParser();
 try {
-    await siteParser.launch();
-    const results = await siteParser.parsePage(
-        'https://www.eldorado.ru/c/vse-igry/b/SONY/'
-    );
-    await fsPromises.writeFile('eldorado.json', JSON.stringify(results));
-    console.log(results, results?.length);
+    await siteParser.launch({
+        userDataDir: './udEldorado',
+    });
+    // const results = await siteParser.parsePage(
+    //     'https://www.eldorado.ru/c/vse-igry/b/SONY/'
+    // );
+    // await fsPromises.writeFile('eldorado.json', JSON.stringify(results));
+    // console.log(results, results?.length);
+    await siteParser.gotoUrl('https://www.eldorado.ru/c/vse-igry/b/SONY/');
+    await siteParser.waitForSelector('.nr', { timeout: 5000 });
+    let city = await siteParser.getCity();
+    console.log(city);
+    await siteParser.setCity('Набер');
+    city = await siteParser.getCity();
+    console.log(city);
+    await siteParser.setCity('Казань');
+    city = await siteParser.getCity();
+    console.log(city);
 } finally {
     await siteParser.free();
 }

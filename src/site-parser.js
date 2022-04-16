@@ -102,6 +102,20 @@ export default class SiteParser {
         await scrollDown(0);
     }
 
+    gotoUrl(url) {
+        return this.page.goto(url, {
+            waitUntil: 'networkidle2',
+        });
+    }
+
+    waitForSelector(selector, opt) {
+        return this.page.waitForSelector(selector, opt).catch(() =>
+            this.page.screenshot({
+                path: `screenshot_sel_${selector}.png`,
+            })
+        );
+    }
+
     async free() {
         if (this.browser) await this.browser.close();
     }
