@@ -9,30 +9,42 @@ try {
 } */
 
 import { promises as fsPromises } from 'fs';
+import dayjs from 'dayjs';
 import MvideoParser from './src/mvideo-parser.js';
 import EldoradoParser from './src/eldorado-parser.js';
 
 // const siteParser = new MvideoParser();
 const siteParser = new EldoradoParser();
 try {
-    await siteParser.launch({
-        userDataDir: './udEldorado',
-    });
+    await siteParser.launch(
+        {
+            // userDataDir: './userData/udEldorado',
+            devtools: true,
+        },
+        {
+            harFile: `eldorado_${dayjs().format(
+                'YYYY-MM-DD_HH-mm-ss.SSS'
+            )}.har`,
+        }
+    );
     // const results = await siteParser.parsePage(
     //     'https://www.eldorado.ru/c/vse-igry/b/SONY/'
     // );
     // await fsPromises.writeFile('eldorado.json', JSON.stringify(results));
     // console.log(results, results?.length);
+    await siteParser.page.setRequestInterception(true);
+    siteParser.page.on('request', (request) => request.continue());
     await siteParser.gotoUrl('https://www.eldorado.ru/c/vse-igry/b/SONY/');
+    // await siteParser.page.waitForTimeout(6000 * 1000);
     await siteParser.waitForSelector('.nr', { timeout: 5000 });
     let city = await siteParser.getCity();
-    console.log(city);
+    console.log(`Город: ${city}`);
     await siteParser.setCity('Набер');
     city = await siteParser.getCity();
-    console.log(city);
-    await siteParser.setCity('Казань');
-    city = await siteParser.getCity();
-    console.log(city);
+    console.log(`Город: ${city}`);
+    // await siteParser.setCity('Казань');
+    // city = await siteParser.getCity();
+    // console.log(city);
 } finally {
     await siteParser.free();
 }

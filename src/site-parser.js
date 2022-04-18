@@ -1,4 +1,6 @@
 import puppeteer from 'puppeteer';
+import PuppeteerHar from 'puppeteer-har';
+import UserAgent from './tools/user-agent.js';
 
 const config = {
     viewportHeight: 1280,
@@ -9,7 +11,7 @@ const config = {
 };
 
 const opts = {
-    headless: true,
+    headless: false,
     defaultViewport: {
         width: config.viewportWidth,
         height: config.viewportHeight,
@@ -17,14 +19,33 @@ const opts = {
 };
 
 export default class SiteParser {
-    async launch(options = {}) {
+    har;
+
+    opts = {};
+
+    async launch(options = {}, otherOpts = {}) {
         this.browser = await puppeteer.launch({ ...options, ...opts });
-        await this.newPage();
+
+        const pageOptions = {};
+
+        if (typeof otherOpts === 'object') {
+            this.opts = otherOpts;
+            if (otherOpts.harFile) pageOptions.harFile = otherOpts.harFile;
+        }
+        await this.newPage(pageOptions);
     }
 
-    async newPage() {
+    async newPage(opts) {
         this.page = await this.browser.newPage();
-        await this.page.setUserAgent(config.userAgent);
+        this.userAgent = new UserAgent().get();
+        const userAgent = this.userAgent.toString();
+        console.log(`User-Agent: ${userAgent}`);
+        await this.page.setUserAgent(userAgent);
+        if (opts.harFile) {
+            const har = new PuppeteerHar(this.page);
+            await har.start({ path: opts.harFile });
+            this.har = har;
+        }
     }
 
     async _optimizeLoading() {
@@ -117,6 +138,7 @@ export default class SiteParser {
     }
 
     async free() {
+        if (this.har) await this.har.stop();
         if (this.browser) await this.browser.close();
     }
 }

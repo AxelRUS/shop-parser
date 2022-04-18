@@ -74,9 +74,18 @@ export default class EldoradoParser extends SiteParser {
     }
 
     getCity() {
-        return this.page.evaluate(() =>
-            document.querySelector('.nj')?.textContent?.trim()
-        );
+        return this.page
+            .waitForSelector('.nj', { timeout: 10000 })
+            .then(() =>
+                this.page.evaluate(() =>
+                    document.querySelector('.nj')?.textContent?.trim()
+                )
+            )
+            .finally(() =>
+                this.page.screenshot({
+                    path: `screenshot_get_city.png`,
+                })
+            );
     }
 
     async setCity(city) {
@@ -92,7 +101,7 @@ export default class EldoradoParser extends SiteParser {
         //     element.
         // }, city);
         await this.page.focus('input.dz');
-        await this.page.type('input.dz', city, { delay: 110 });
+        await this.page.type('input.dz', city, { delay: 250 });
         // await this.page.$eval(
         //     'input.dz',
         //     (el, city) => (el.value = city),
@@ -105,6 +114,7 @@ export default class EldoradoParser extends SiteParser {
                     path: `screenshot_enter_city.png`,
                 })
             );
+        await this.page.waitForTimeout(4000);
         await this.page
             .evaluate(() => {
                 document.querySelector('.ez > span').click();
