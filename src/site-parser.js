@@ -31,13 +31,15 @@ export default class SiteParser {
         if (typeof otherOpts === 'object') {
             this.opts = otherOpts;
             if (otherOpts.harFile) pageOptions.harFile = otherOpts.harFile;
+            if (otherOpts.userAgentFile)
+                pageOptions.userAgentFile = otherOpts.userAgentFile;
         }
         await this.newPage(pageOptions);
     }
 
     async newPage(opts) {
         this.page = await this.browser.newPage();
-        this.userAgent = new UserAgent().get();
+        this.userAgent = new UserAgent().setUserPath(opts.userAgentFile).get();
         const userAgent = this.userAgent.toString();
         console.log(`User-Agent: ${userAgent}`);
         await this.page.setUserAgent(userAgent);

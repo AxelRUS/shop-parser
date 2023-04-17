@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 export default class UserAgent {
     setUserPath(path) {
         this.path = `${path}/user-agent.json`;
+        return this;
     }
 
     async get() {
